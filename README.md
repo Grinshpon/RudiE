@@ -1,5 +1,5 @@
 # RudiE
-A roguelike game made from a rudimentary engine
+A simple roguelike game made from a rudimentary engine. It is primarily an amateur practice project as I have no knowledge of how the source code for Rogue looks. As such it may not be optimized or even well written, but additionsvand alterations will continue to be made as I gain more experience.
 
 # Controls  
 [Controls are case sensitive]
