@@ -14,4 +14,6 @@ A simple roguelike game made from a rudimentary engine. It is primarily an amate
 | Move North-East | u |
 | Move South-West | b |
 | Move South-East | n |
+| Help | ? |
+| Continue | Space |
 | Quit | Q |
