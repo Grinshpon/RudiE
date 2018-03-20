@@ -46,7 +46,7 @@ std::string CONSOLE[] =
     "Move South-East\t:\tn\n"
     "Quit\t\t:\tQ\n"
     "Help\t\t:\t?\n"
-    "--------Press Space--------",
+    "--------Press Space-------",
     "\n\n\n\n\t\t\t\t-------------"
     "\n\t\t\t\tYou Have Died"
     "\n\t\t\t\t-Press Space-"
@@ -118,7 +118,7 @@ class Living: public Entity
             s += ")\tDmg: ";
             s += std::to_string(tdmg);
             s += "\tHunger: ";
-            s += std::to_string((int)hunger);
+            s += std::to_string(hunger);
             s += "\n";
             return s;
         }

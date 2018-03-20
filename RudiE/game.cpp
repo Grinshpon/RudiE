@@ -19,6 +19,7 @@ int getch(void);
 int consoleQueue[10];
 int queuePlace = 0;
 int queueCounter = -1;
+bool hungryMessage = true, hungryMessage1 = true;
 
 Map gameMap;
 Map gameMapInstance; // = gameMap
@@ -89,12 +90,28 @@ void Load()
     }
     else
         updateWorld = !updateWorld;
+    if(player.hunger <= 3 && hungryMessage)//comparing double to int
+    {
+        queueCounter += 1;
+        consoleQueue[queueCounter] = slightHungry;
+        hungryMessage = false;
+    }
+    else if(player.hunger > 3)
+        hungryMessage = true;
+    if(player.hunger <= 1 && hungryMessage1)
+    {
+        queueCounter += 1;
+        consoleQueue[queueCounter] = reallyHungry;
+        hungryMessage1 = false;
+    }
+    else if(player.hunger > 1)
+        hungryMessage1 = true;
+    if(player.health == 0)
+        GameOver();
 }
 
 void Draw()
 {//draw update
-    if(player.health == 0)
-        GameOver();
     if(clearMap)
     {
         Clear();
@@ -121,11 +138,16 @@ void Draw()
             Clear();
             cout << player.printStats();
             drawMap();
-            cout << CONSOLE[inMessage] << " -more-" << endl;
+            if(queueCounter > 0)
+            {
+                cout << CONSOLE[inMessage] << " -more-" << endl;
+                while(input == '/')
+                input = getch();
+            }
+            else
+                cout << CONSOLE[inMessage] << endl;
             queuePlace += 1;
             queueCounter -= 1;
-            while(input != ' ')
-            input = getch();
         }
         queuePlace = 0;
     }
