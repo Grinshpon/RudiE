@@ -10,9 +10,9 @@
 
 using namespace std;
 
-int inMessage = init;
+int inMessage = init, dCTMessage = dDefault;
 char input = ' ';
-string inputNo = "Nn";
+string inputNo = "Yy";
 string walkable = ".#";
 bool clearMap = false,updateWorld = false;
 int getch(void);
@@ -42,12 +42,56 @@ void Start()
 {//initializer
     Clear();
     playerInit();
+    gameMap.genSeed(0);
+    gameMap.buildLevel();
+    srand (time(NULL));
+    int counti = 0, countj = 0, tempx = 0, tempy = 0;
+    bool playerStartLocation = true;
+    for(auto &r : gameMap.mapData)
+    {
+        if(playerStartLocation)
+        {
+            for(auto &s : r)
+            {
+                if(s == '.')
+                {
+                    tempx = countj;
+                    tempy = counti;
+                    if(rand()%2 == 0)
+                    {
+                        player.x = countj;
+                        player.y = counti;
+                        playerStartLocation = false;
+                    }
+                }
+                else if(counti == (gameMap.HEIGHT-1) && countj == (gameMap.WIDTH-1))
+                {
+                    player.x = tempx;
+                    player.y = tempy;
+                    playerStartLocation = false;
+                }
+                ++countj;
+            }
+            countj = 0;
+            ++counti;
+        }
+    }
 }
 
 void drawMap()
 {
     //draw map, then NPCs and Player(@)
-    gameMapInstance = gameMap;
+    gameMapInstance.seed = gameMap.seed;
+    gameMapInstance.buildLevel();
+    /*
+    for(int i = 0; i < gameMap.HEIGHT; i++)
+    {
+        for(int j = 0; j < gameMap.WIDTH; j++)
+        {
+            gameMapInstance.mapData[i][j] = gameMap.mapData[i][j];
+        }
+    }
+    */
     gameMapInstance.mapData[player.y][player.x] = '@';
     for(int i = 0; i < gameMapInstance.HEIGHT; i++)
     {
@@ -67,13 +111,16 @@ void moveEntity(int modY, int modX)//add parameter for living:entity object and 
         player.x -= modX;
     }
     else
-        inMessage = cantMove;
+    {
+        consoleQueue[queueCounter] = cantMove;
+        updateWorld = false;
+    }
 }
 
 void GameOver()
 {
     Clear();
-    cout << CONSOLE[gameOver];
+    cout << CONSOLE[gameOver] << endl << CONSOLE[deathCause] << deathCauseText[dCTMessage];
     while(input != ' ')
     input = getch();
     Clear();
@@ -86,7 +133,10 @@ void Load()
     {
         player.logicUpdate();
         if(player.hunger <= 0)
+        {
             player.health -= 1;
+            dCTMessage = dHunger;
+        }
     }
     else
         updateWorld = !updateWorld;
@@ -159,7 +209,7 @@ void Draw()
         case 'Q':
             cout << CONSOLE[quitCheck];
             input = getch();
-            if (inputNo.find(input) == string::npos)
+            if (inputNo.find(input) != string::npos)
             {
                 system("clear");
                 exit(0);

@@ -1,6 +1,8 @@
 #ifndef RLKLIB_H
 #define RLKLIB_H
 
+#include "mapgen.h"
+
 enum consoleMessage
 {
     init,
@@ -18,14 +20,16 @@ enum consoleMessage
     helpScreen,
     gameOver,
     slightHungry,
-    reallyHungry
+    reallyHungry,
+    deathCause,
+    consoleMessageMax
 };
 
-std::string CONSOLE[] =
+std::string CONSOLE[consoleMessageMax] =
 {
     "RudiE v 0.0.4 (Press '?' for help)",
     "Enter Command: ",
-    "Are you sure you want to quit? Y/n\n",
+    "Are you sure you want to quit? y/N\n",
     "Move North",
     "Move South",
     "Move West",
@@ -52,7 +56,21 @@ std::string CONSOLE[] =
     "\n\t\t\t\t-Press Space-"
     "\n\t\t\t\t-------------",
     "Your stomach rumbles",
-    "Your stomach is in great pain"
+    "Your stomach is in great pain",
+    "\n\t\t\t\tCause of death:\n\n\t\t\t\t   "
+};
+
+enum CauseOfDeath
+{
+    dHunger,
+    dDefault,
+    CauseOfDeathMax
+};
+
+std::string deathCauseText[CauseOfDeathMax] =
+{
+    "Hunger",
+    "dDefault"
 };
 
 enum livingEntityStats
@@ -66,8 +84,8 @@ enum livingEntityStats
 class Map
 {
     public:
-        static const int WIDTH = 80;
-        static const int HEIGHT = 20; //24 minus four lines of text for console (so that default terminal screen compatible)
+        static const int WIDTH = 80; //80: default terminal screen width
+        static const int HEIGHT = 20; //20: 24 minus four lines of text for console (so that default terminal screen compatible)
         int depth;
         char mapData[HEIGHT][WIDTH] = //REPLACE WITH RANDOM ALGORITHM LATER
         {// (Y,X)
@@ -79,13 +97,50 @@ class Map
             {'|','.','.','.','.','.','|'},
             {'-','-','-','-','-','-','-'},
         };
-        void buildLevel(int depth);
+        int *seed;
+        void genSeed(int depth)
+        {
+            seed = GenerateMap(WIDTH,HEIGHT);
+        }
+        void buildLevel()
+        {
+            for(int i = 0; i < HEIGHT; i++)
+            {
+                for(int j = 0; j < WIDTH; j++)
+                {
+                    switch (seed[WIDTH*i+j])
+                    {
+                        case empty:
+                            mapData[i][j] = ' ';
+                            break;
+                        case vWall:
+                            mapData[i][j] = '|';
+                            break;
+                        case hWall:
+                            mapData[i][j] = '-';
+                            break;
+                        case room:
+                            mapData[i][j] = '.';
+                            break;
+                        case hall:
+                            mapData[i][j] = '#';
+                            break;
+                        case door:
+                            mapData[i][j] = '+';
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
 };
 
 class Entity
 {
     public:
         int x, y;
+        std::string id;
 };
 
 class Living: public Entity
@@ -118,8 +173,12 @@ class Living: public Entity
             s += ")\tDmg: ";
             s += std::to_string(tdmg);
             s += "\tHunger: ";
-            s += std::to_string(hunger);
-            s += "\n";
+            s += std::to_string((int)hunger);
+            s += "\t(";
+            s += std::to_string(x);
+            s += ",";
+            s += std::to_string(y);
+            s += ")\n";
             return s;
         }
 };
