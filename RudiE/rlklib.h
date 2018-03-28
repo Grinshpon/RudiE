@@ -29,7 +29,7 @@ enum consoleMessage
 
 std::string CONSOLE[consoleMessageMax] =
 {
-    "RudiE v 0.1.0 (Press '?' for help)",
+    "RudiE v 0.1.1 (Press '?' for help)",
     "Enter Command: ",
     "Are you sure you want to quit? y/N\n",
     "Move North",
