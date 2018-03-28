@@ -23,6 +23,7 @@ enum consoleMessage
     slightHungry,
     reallyHungry,
     deathCause,
+    levelUp,
     consoleMessageMax
 };
 
@@ -59,7 +60,8 @@ std::string CONSOLE[consoleMessageMax] =
     "\n\t\t\t\t-------------",
     "Your stomach rumbles",
     "Your stomach is in great pain",
-    "\n\t\t\t\tCause of death:\n\n\t\t\t\t   "
+    "\n\t\t\t\tCause of death:\n\n\t\t\t\t   ",
+    "You feel a great rush of energy! (Level Up)"
 };
 
 enum CauseOfDeath
@@ -150,12 +152,16 @@ class Entity
 class Living: public Entity
 {
     public:
-        int health,bdmg = 0,tdmg;
+        int health,bdmg = 0,tdmg,reqXP = 0;
         double hunger = 10.5;
         int stats[MAX] = {10,1,1,0,1};//default
         void setStats()
         {
             health = stats[vit];
+            if(reqXP == 0)
+                reqXP = 100;
+            else
+                reqXP = reqXP*1.25;
         }
         void updateDMG()
         {
@@ -172,6 +178,16 @@ class Living: public Entity
         {
             if(hunger > 0)
                 hunger -= 0.025;
+            if(stats[xp] >= reqXP && stats[lvl] != 48) //48 Max Level
+            {
+                ++stats[lvl];
+                stats[vit] += rand()%2+1; //choose stat to specialize points in (receives extra 3 points)
+                stats[str] += rand()%2+1;
+                stats[dex] += rand()%2+1;
+                hunger = 10;
+                stats[xp] -= reqXP;
+                setStats();
+            }
         }
         std::string printStats()
         {
@@ -185,6 +201,11 @@ class Living: public Entity
             s += std::to_string(tdmg);
             s += "\tHunger: ";
             s += std::to_string((int)hunger);
+            s += "\tXp: ";
+            s += std::to_string(stats[xp]);
+            s += "(";
+            s += std::to_string(reqXP);
+            s += ")";
             s += "\t(";
             s += std::to_string(x);
             s += ",";
@@ -194,7 +215,20 @@ class Living: public Entity
         }
         std::string printCharSheet()
         {
-            std::string s = "Character Sheet\n\nHealth:\t\t";
+            std::string s = "Character Sheet\n\n";
+            s += "Level:\t\t";
+            s += std::to_string(stats[lvl]);
+            s += "\nExperience:\t";
+            s += std::to_string(stats[xp]);
+            s += "/";
+            s += std::to_string(reqXP);
+            s += "\n\nVitality:\t";
+            s += std::to_string(stats[vit]);
+            s += "\nStrength:\t";
+            s += std::to_string(stats[str]);
+            s += "\nDexterity:\t";
+            s += std::to_string(stats[dex]);
+            s += "\n\nHealth:\t\t";
             s += std::to_string(health);
             s += "/";
             s += std::to_string(stats[vit]);
@@ -202,16 +236,6 @@ class Living: public Entity
             s += std::to_string(tdmg);
             s += "\nHunger:\t\t";
             s += std::to_string((int)hunger);
-            s += "\n\nVitality:\t";
-            s += std::to_string(stats[vit]);
-            s += "\nStrength:\t";
-            s += std::to_string(stats[str]);
-            s += "\nDexterity:\t";
-            s += std::to_string(stats[dex]);
-            s += "\n\nLevel:\t\t";
-            s += std::to_string(stats[lvl]);
-            s += "\nExperience:\t";
-            s += std::to_string(stats[xp]);
             s += "\n\n-Press Space-";
             return s;
         }

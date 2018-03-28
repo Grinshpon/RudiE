@@ -1,6 +1,6 @@
 //Game code goes here
 #include <iostream>
-#include <time.h>
+//#include <time.h>
 #include <stdlib.h>
 //getch emulator
 #include <unistd.h>
@@ -132,6 +132,11 @@ void GameOver()
 
 void Load()
 {//logic update (IS IT NECESSARY?)
+    if(player.stats[xp] >= player.reqXP)
+        {
+            queueCounter += 1;
+            consoleQueue[queueCounter] = levelUp;
+        }
     if(updateWorld)
     {
         player.logicUpdate();
@@ -279,14 +284,7 @@ void Draw()
             break;
         case 'T': //TEST REMOVE LATER
             clearMap = true;
-            queueCounter += 1;
-            consoleQueue[queueCounter] = moveUp;
-            queueCounter += 1;
-            consoleQueue[queueCounter] = moveDown;
-            queueCounter += 1;
-            consoleQueue[queueCounter] = moveLeft;
-            queueCounter += 1;
-            consoleQueue[queueCounter] = moveRight;
+            player.stats[xp] = player.reqXP;
             break;
         case 'C':
             Clear();

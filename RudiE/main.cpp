@@ -1,8 +1,10 @@
-//Rudimentary Text Based Game Engine RudiE
-//~~~~                        ~
-//Daniel Grinshpon
+/*
+  Rudimentary Text Based Game Engine RudiE
+  ~~~~                        ~
+
+  Daniel Grinshpon
+*/
 #include <iostream>
-#include <time.h>
 using namespace std;
 
 extern void Start();
