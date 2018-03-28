@@ -1,6 +1,7 @@
 #ifndef RLKLIB_H
 #define RLKLIB_H
 
+#include <stdlib.h>
 #include "mapgen.h"
 
 enum consoleMessage
@@ -27,7 +28,7 @@ enum consoleMessage
 
 std::string CONSOLE[consoleMessageMax] =
 {
-    "RudiE v 0.0.4 (Press '?' for help)",
+    "RudiE v 0.1.0 (Press '?' for help)",
     "Enter Command: ",
     "Are you sure you want to quit? y/N\n",
     "Move North",
@@ -48,6 +49,7 @@ std::string CONSOLE[consoleMessageMax] =
     "Move North-East\t:\tu\n"
     "Move South-West\t:\tb\n"
     "Move South-East\t:\tn\n"
+    "Character Sheet\t:\tC\n"
     "Quit\t\t:\tQ\n"
     "Help\t\t:\t?\n"
     "--------Press Space-------",
@@ -78,6 +80,8 @@ enum livingEntityStats
     vit, //max health
     str, //damage(scale)/armor
     dex, //damage(scale)/evasion
+    xp,
+    lvl,
     MAX
 };
 
@@ -148,14 +152,21 @@ class Living: public Entity
     public:
         int health,bdmg = 0,tdmg;
         double hunger = 10.5;
-        int stats[MAX] = {10,1,1};//default
+        int stats[MAX] = {10,1,1,0,1};//default
         void setStats()
         {
             health = stats[vit];
         }
         void updateDMG()
         {
-            tdmg = bdmg+str*0.5+dex*0.5;
+            tdmg = bdmg+stats[str]*0.5+stats[dex]*0.5;
+        }
+        void randStats()
+        {
+            srand (time(NULL));
+            stats[vit] = rand()%5+10;
+            stats[str] = rand()%4+1;
+            stats[dex] = rand()%4+1;
         }
         void logicUpdate()
         {
@@ -179,6 +190,29 @@ class Living: public Entity
             s += ",";
             s += std::to_string(y);
             s += ")\n";
+            return s;
+        }
+        std::string printCharSheet()
+        {
+            std::string s = "Character Sheet\n\nHealth:\t\t";
+            s += std::to_string(health);
+            s += "/";
+            s += std::to_string(stats[vit]);
+            s += "\nDamage:\t\t";
+            s += std::to_string(tdmg);
+            s += "\nHunger:\t\t";
+            s += std::to_string((int)hunger);
+            s += "\n\nVitality:\t";
+            s += std::to_string(stats[vit]);
+            s += "\nStrength:\t";
+            s += std::to_string(stats[str]);
+            s += "\nDexterity:\t";
+            s += std::to_string(stats[dex]);
+            s += "\n\nLevel:\t\t";
+            s += std::to_string(stats[lvl]);
+            s += "\nExperience:\t";
+            s += std::to_string(stats[xp]);
+            s += "\n\n-Press Space-";
             return s;
         }
 };

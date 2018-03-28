@@ -12,7 +12,7 @@ using namespace std;
 
 int inMessage = init, dCTMessage = dDefault;
 char input = ' ';
-string inputNo = "Yy";
+string inputYes = "Yy";
 string walkable = ".#";
 bool clearMap = false,updateWorld = false;
 int getch(void);
@@ -27,7 +27,9 @@ Living player;
 
 void playerInit()
 {
+    player.randStats();
     player.setStats();
+    player.updateDMG();
     player.x = 1; //randomize in future
     player.y = 3; //randomize in future
 }
@@ -44,6 +46,7 @@ void Start()
     playerInit();
     gameMap.genSeed(0);
     gameMap.buildLevel();
+
     srand (time(NULL));
     int counti = 0, countj = 0, tempx = 0, tempy = 0;
     bool playerStartLocation = true;
@@ -57,7 +60,7 @@ void Start()
                 {
                     tempx = countj;
                     tempy = counti;
-                    if(rand()%2 == 0)
+                    if(rand()%5 == 0)
                     {
                         player.x = countj;
                         player.y = counti;
@@ -148,7 +151,7 @@ void Load()
     }
     else if(player.hunger > 3)
         hungryMessage = true;
-    if(player.hunger <= 1 && hungryMessage1)
+    if(player.hunger < 1 && hungryMessage1)
     {
         queueCounter += 1;
         consoleQueue[queueCounter] = reallyHungry;
@@ -209,7 +212,7 @@ void Draw()
         case 'Q':
             cout << CONSOLE[quitCheck];
             input = getch();
-            if (inputNo.find(input) != string::npos)
+            if (inputYes.find(input) != string::npos)
             {
                 system("clear");
                 exit(0);
@@ -284,6 +287,14 @@ void Draw()
             consoleQueue[queueCounter] = moveLeft;
             queueCounter += 1;
             consoleQueue[queueCounter] = moveRight;
+            break;
+        case 'C':
+            Clear();
+            cout << player.printCharSheet();
+            while(input != ' ')
+            input = getch();
+            clearMap = true;
+            updateWorld = false;
             break;
         default:
             clearMap = true;

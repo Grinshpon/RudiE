@@ -29,7 +29,7 @@ int *GenerateMap(int width, int height)
         level[i] = 0;
     srand (time(NULL));
 
-    int wsize = rand()%5+5, hsize = rand()%3+5; //5+5 , 3+5
+    int wsize = rand()%7+5, hsize = rand()%6+5; //5+5 , 3+5
     int x = rand()%(width - wsize), y = rand()%(height - hsize);
     for(int j = 0; j < hsize; j++)
     {
