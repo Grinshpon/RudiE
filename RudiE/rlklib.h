@@ -2,7 +2,13 @@
 #define RLKLIB_H
 
 #include <stdlib.h>
+#include <math.h>
 #include "mapgen.h"
+
+std::string walkable = ".#+";
+int consoleQueue[10];
+int queuePlace = 0;
+int queueCounter = -1;
 
 enum consoleMessage
 {
@@ -24,12 +30,13 @@ enum consoleMessage
     reallyHungry,
     deathCause,
     levelUp,
+    peonAttack,
     consoleMessageMax
 };
 
 std::string CONSOLE[consoleMessageMax] =
 {
-    "RudiE v 0.1.1 (Press '?' for help)",
+    "RudiE v 0.1.2 (Press '?' for help)",
     "Enter Command: ",
     "Are you sure you want to quit? y/N\n",
     "Move North",
@@ -61,7 +68,8 @@ std::string CONSOLE[consoleMessageMax] =
     "Your stomach rumbles",
     "Your stomach is in great pain",
     "\n\t\t\t\tCause of death:\n\n\t\t\t\t   ",
-    "You feel a great rush of energy! (Level Up)"
+    "You feel a great rush of energy! (Level Up)",
+    "The peon attacks!",
 };
 
 enum CauseOfDeath
@@ -146,7 +154,7 @@ class Entity
 {
     public:
         int x, y;
-        std::string id;
+        char id;
 };
 
 class Living: public Entity
@@ -238,6 +246,56 @@ class Living: public Entity
             s += std::to_string((int)hunger);
             s += "\n\n-Press Space-";
             return s;
+        }
+        int distance(Entity &target)
+        {
+            return sqrt((x-target.x)*(x-target.x)+(y-target.y)*(y-target.y));
+        }
+        void attack(Living& target)
+        {
+            queueCounter += 1;
+            consoleQueue[queueCounter] = peonAttack;
+        }
+};
+
+class AIHandler
+{
+    public:
+        void moveLiving(Map& map, Living& living, int modY, int modX)
+        {
+                if(walkable.find(map.mapData[living.y-modY][living.x-modX]) != std::string::npos)
+                {
+                    living.y -= modY;
+                    living.x -= modX;
+                }
+        }
+        void updatePeon(Living& peon, Living& player, Map& Gmap)
+        {
+            if(peon.distance(player) < 10)
+            {
+                if(peon.distance(player) == 1)
+                {
+                    peon.attack(player);
+                }
+                else
+                {
+                    srand (time(NULL));
+                    if(abs(peon.x-player.x) > abs(peon.y-player.y))
+                    {
+                        if((peon.x-player.x) < 0)
+                            moveLiving(Gmap, peon, 0, -1);
+                        else
+                            moveLiving(Gmap, peon,0,1);
+                    }
+                    else
+                    {
+                        if((peon.y-player.y) < 0)
+                            moveLiving(Gmap, peon, -1, 0);
+                        else
+                            moveLiving(Gmap, peon,1,0);
+                    }
+                }
+            }
         }
 };
 

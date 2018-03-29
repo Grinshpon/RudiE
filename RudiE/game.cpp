@@ -13,25 +13,35 @@ using namespace std;
 int inMessage = init, dCTMessage = dDefault;
 char input = ' ';
 string inputYes = "Yy";
-string walkable = ".#";
+//string walkable = ".#+";
 bool clearMap = false,updateWorld = false;
 int getch(void);
-int consoleQueue[10];
-int queuePlace = 0;
-int queueCounter = -1;
+//int consoleQueue[10];
+//int queuePlace = 0;
+//int queueCounter = -1;
 bool hungryMessage = true, hungryMessage1 = true;
 
 Map gameMap;
 Map gameMapInstance; // = gameMap
 Living player;
+AIHandler Handler;
+
+// test peon
+Living peon1;
 
 void playerInit()
 {
     player.randStats();
     player.setStats();
     player.updateDMG();
-    player.x = 1; //randomize in future
-    player.y = 3; //randomize in future
+    player.id = '@';
+    player.x = -1;
+    player.y = -1;
+
+    peon1.randStats();
+    peon1.setStats();
+    peon1.updateDMG();
+    peon1.id = 'p';
 }
 
 void Clear()
@@ -40,13 +50,8 @@ void Clear()
     system("clear");
 }
 
-void Start()
-{//initializer
-    Clear();
-    playerInit();
-    gameMap.genSeed(0);
-    gameMap.buildLevel();
-
+void LivingStartLocation(Entity& ent, int invalX, int invalY)
+{
     srand (time(NULL));
     int counti = 0, countj = 0, tempx = 0, tempy = 0;
     bool playerStartLocation = true;
@@ -56,21 +61,21 @@ void Start()
         {
             for(auto &s : r)
             {
-                if(s == '.')
+                if(s == '.' && (countj != invalX && counti != invalY))
                 {
                     tempx = countj;
                     tempy = counti;
                     if(rand()%5 == 0)
                     {
-                        player.x = countj;
-                        player.y = counti;
+                        ent.x = countj;
+                        ent.y = counti;
                         playerStartLocation = false;
                     }
                 }
                 else if(counti == (gameMap.HEIGHT-1) && countj == (gameMap.WIDTH-1))
                 {
-                    player.x = tempx;
-                    player.y = tempy;
+                    ent.x = tempx;
+                    ent.y = tempy;
                     playerStartLocation = false;
                 }
                 ++countj;
@@ -79,6 +84,17 @@ void Start()
             ++counti;
         }
     }
+}
+
+void Start()
+{//initializer
+    Clear();
+    playerInit();
+    gameMap.genSeed(0);
+    gameMap.buildLevel();
+
+    LivingStartLocation(player,-1,-1);
+    LivingStartLocation(peon1,player.x,player.y);//TEMPORARY
 }
 
 void drawMap()
@@ -95,7 +111,8 @@ void drawMap()
         }
     }
     */
-    gameMapInstance.mapData[player.y][player.x] = '@';
+    gameMapInstance.mapData[player.y][player.x] = player.id;
+    gameMapInstance.mapData[peon1.y][peon1.x] = peon1.id;
     for(int i = 0; i < gameMapInstance.HEIGHT; i++)
     {
         for(int j = 0; j < gameMapInstance.WIDTH; j++)
@@ -106,7 +123,7 @@ void drawMap()
     }
 }
 
-void moveEntity(int modY, int modX)//add parameter for living:entity object and replace player
+void movePlayer(int modY, int modX)//add parameter for living:entity object and replace player
 {
     if(walkable.find(gameMap.mapData[player.y-modY][player.x-modX]) != string::npos)
     {
@@ -118,6 +135,11 @@ void moveEntity(int modY, int modX)//add parameter for living:entity object and 
         consoleQueue[queueCounter] = cantMove;
         updateWorld = false;
     }
+}
+
+void HandlerUpdate()//add parameter for living:entity object and replace player
+{
+    Handler.updatePeon(peon1,player,gameMap);
 }
 
 void GameOver()
@@ -139,6 +161,7 @@ void Load()
         }
     if(updateWorld)
     {
+        HandlerUpdate();
         player.logicUpdate();
         if(player.hunger <= 0)
         {
@@ -230,49 +253,49 @@ void Draw()
             //inMessage = moveUp;
             queueCounter += 1;
             consoleQueue[queueCounter] = moveUp;
-            moveEntity(1,0);
+            movePlayer(1,0);
             break;
         case 'j': //down
             clearMap = true;
             queueCounter += 1;
             consoleQueue[queueCounter] = moveDown;
-            moveEntity(-1,0);
+            movePlayer(-1,0);
             break;
         case 'h': //left
             clearMap = true;
             queueCounter += 1;
             consoleQueue[queueCounter] = moveLeft;
-            moveEntity(0,1);
+            movePlayer(0,1);
             break;
         case 'l': //right
             clearMap = true;
             queueCounter += 1;
             consoleQueue[queueCounter] = moveRight;
-            moveEntity(0,-1);
+            movePlayer(0,-1);
             break;
         case 'y': //up-Left
             clearMap = true;
             queueCounter += 1;
             consoleQueue[queueCounter] = moveUpLeft;
-            moveEntity(1,1);
+            movePlayer(1,1);
             break;
         case 'u': //up-right
             clearMap = true;
             queueCounter += 1;
             consoleQueue[queueCounter] = moveRight;
-            moveEntity(1,-1);
+            movePlayer(1,-1);
             break;
         case 'b': //down-left
             clearMap = true;
             queueCounter += 1;
             consoleQueue[queueCounter] = moveDownLeft;
-            moveEntity(-1,1);
+            movePlayer(-1,1);
             break;
         case 'n': //down-right
             clearMap = true;
             queueCounter += 1;
             consoleQueue[queueCounter] = moveDownRight;
-            moveEntity(-1,-1);
+            movePlayer(-1,-1);
             break;
         case '?':
             Clear();
