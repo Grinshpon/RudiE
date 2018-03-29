@@ -4,16 +4,13 @@ A simple roguelike game made from a rudimentary engine. It is primarily an amate
 # Controls  
 [Controls are case sensitive]
 
-| Action | Command |
+#### Movement/Attacking Directions
+y . k . u  
+j . @ . l  
+b . j . n 
+
+| Command | Key |
 |---|---|
-| Move North | k |
-| Move South | j |
-| Move West | h |
-| Move East | l |
-| Move North-West | y |
-| Move North-East | u |
-| Move South-West | b |
-| Move South-East | n |
 | Character Sheet | C |
 | Help | ? |
 | Continue | Space |
