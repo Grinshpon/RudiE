@@ -1,0 +1,15 @@
+RudiE Monster Manual
+
+--ADDED--
+p - orc peon
+        In every generation of Orcs, the strongest become Grunts, the wisest become Sages, and the
+        weakest are to become the lowly servant Peons. As such, Peons are weak creatures, and years
+        of abuse and submissiveness have rendered them cowardly. When they sustain significant
+        damage or hear the cries around them, they are sure to run away.
+
+
+--PLANED--
+G - orc grunt, a relentless warrior
+I - imp, a demonic minion
+b - bat, the breeds here are not only blind, but seem to have gone insane
+B - basilisk, a slithering creature that spits poison
