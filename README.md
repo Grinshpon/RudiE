@@ -5,9 +5,9 @@ A simple roguelike game made from a rudimentary engine. It is primarily an amate
 [Controls are case sensitive]
 
 #### Movement/Attacking Directions
-y . k . u  
-h . @ . l  
-b . j . n 
+y  .  k  .  u  
+h  .  @  .  l  
+b  .  j  .  n 
 
 | Command | Key |
 |---|---|
