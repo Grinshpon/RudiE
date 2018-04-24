@@ -6,7 +6,7 @@ A simple roguelike game made from a rudimentary engine. It is primarily an amate
 
 #### Movement/Attacking Directions
 y . k . u  
-j . @ . l  
+h . @ . l  
 b . j . n 
 
 | Command | Key |
