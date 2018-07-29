@@ -17,7 +17,7 @@ b  .  j  .  n
 | Quit | Q |
 
 # Compiling  
-Place all the files in the same directory and execute the command:  
+Place all the files in the same directory and compile the cpp files:  
 `$ g++ main.cpp game.cpp -o rudie`  
 Then run it in the terminal with:  
 `$ ./rudie`   
