@@ -1,4 +1,11 @@
 # RudiE
+
+--
+
+Note: This project is deprecated and I have rebooted the roguelike project under the name [Feldunor](https://github.com/Grinshpon/Feldunor/). The original description is below:
+
+--
+
 A simple roguelike game made from a rudimentary engine. It is primarily an amateur practice project with the purpose of experimentation, as I have no knowledge of how the source code for Rogue looks. As such it may not be optimized or even well written, but additions and alterations will continue to be made as I gain more experience.
 
 # Controls  
